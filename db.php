@@ -2,7 +2,7 @@
 
 // DB Connection
 $mysql_db_hostname = "localhost";
-$mysql_db_user = "root";
+$mysql_db_user = "dbuser";
 $mysql_db_password = "password";
 $mysql_db_database = "dbname";
 
