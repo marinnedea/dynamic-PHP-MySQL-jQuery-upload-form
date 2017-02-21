@@ -1,8 +1,8 @@
 <?php
 $mysql_db_hostname = "localhost";
-$mysql_db_user = "uploaduser";
+$mysql_db_user = "your_user";
 $mysql_db_password = "your_password";
-$mysql_db_database = "testupload";
+$mysql_db_database = "your_database";
 
 $dbc = mysqli_connect('' . $mysql_db_hostname . '', '' . $mysql_db_user . '', '' . $mysql_db_password . '', '' . $mysql_db_database .  '') OR die('Could not connect because: '.mysqli_connect_error());
 
@@ -102,11 +102,11 @@ if (!isset($_POST['add_account'])) {
 <tbody id="container">
 	<tr>
 		<td>1</td>
-		<td><div class="form-group"><input class="form-control" name="fields[1][first]" 	type="text"  	placeholder="First" required/></div></td>
-		<td><div class="form-group"><input class="form-control" name="fields[1][last]" 		type="text"  	placeholder="Last" required/></div>	</td>
-		<td><div class="form-group"><input class="form-control" name="fields[1][email]" 	type="email"  	placeholder="email" required/></div></td>
-		<td><input class="btn btn-primary" id="userfiles" name="fields[1][file_uploaded][]" type="file"  	required = "required"/>				</td>
-		<td><input class="btn btn-danger" type="button" value="Remove" onclick="delRow(this)">													</td>
+		<td><div class="form-group"><input class="form-control" name="fields[1][first]"		type="text"  	placeholder="First"	required/></div></td>
+		<td><div class="form-group"><input class="form-control" name="fields[1][last]" 		type="text"  	placeholder="Last" 	required/></div></td>
+		<td><div class="form-group"><input class="form-control" name="fields[1][email]" 	type="email"  	placeholder="email" 	required/></div></td>
+		<td><input class="btn btn-primary" id="userfiles" name="fields[1][file_uploaded][]" 	type="file"  	required = "required"/></td>
+		<td><input class="btn btn-danger" type="button" value="Remove" onclick="delRow(this)">	</td>
 	</tr>							
 </tbody>
 </table>
@@ -129,11 +129,11 @@ $(function(){
 		$('#container').append(
 		'<tr> \
 		<td>' + counter + '</td> \
-		<td><div class="form-group"><input class="form-control" name="fields['+counter+'][first]" 		type="text"  	placeholder="First" required/></div></td> \
-		<td><div class="form-group"><input class="form-control" name="fields['+counter+'][last]" 		type="text"  	placeholder="Last" required/></div>	</td> \
-		<td><div class="form-group"><input class="form-control" name="fields['+counter+'][email]" 		type="email"  	placeholder="email" required/></div></td> \
-		<td><input class="btn btn-primary" id="userfiles" name="fields['+counter+'][file_uploaded][]" 	type="file"  	required = "required"/>				</td> \
-		<td><input class="btn btn-danger" type="button" value="Remove" onclick="delRow(this)">																</td> \
+		<td><div class="form-group"><input class="form-control" name="fields['+counter+'][first]"	type="text"  	placeholder="First" required/></div></td> \
+		<td><div class="form-group"><input class="form-control" name="fields['+counter+'][last]" 	type="text"  	placeholder="Last" required/></div></td> \
+		<td><div class="form-group"><input class="form-control" name="fields['+counter+'][email]" 	type="email"  	placeholder="email" required/></div></td> \
+		<td><input class="btn btn-primary" id="userfiles" name="fields['+counter+'][file_uploaded][]" 	type="file"  	required = "required"/></td> \
+		<td><input class="btn btn-danger" type="button" value="Remove" onclick="delRow(this)"></td> \
 		</tr>');
 
 	});
