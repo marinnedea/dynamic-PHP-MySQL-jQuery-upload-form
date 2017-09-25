@@ -15,7 +15,7 @@ It shouldn't be a problem running on older versions of Apache/PHP/MySQL but I di
 # Usage
 - save the script on a webserver in a folder of your choice (e.g. /var/www/my_project/)
 - create in the same folder a new folder and name it "uploads". If you chose a different name, make sure to change the name in the script too. 
-- change the rights on the "uploads" folder to 755 (chmod -R 655 /var/www/my_project/uploads or chmod u+rwX,go+r -R /var/www/my_project/uploads)
+- change the rights on the "uploads" folder to 755 (chmod -R 755 /var/www/my_project/uploads or chmod u+rwX,go+r -R /var/www/my_project/uploads)
 - create a database and inside the database import the attached accounts.sql file.
 - modify the script to reflect the details of your DB (so it can connect and save data to it)
 - open the script via a web browser ( e.g. http://your_server_address/my_project/script_name.php ) and test it.
