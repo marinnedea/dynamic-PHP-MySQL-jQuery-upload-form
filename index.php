@@ -121,27 +121,56 @@ if (!isset($_POST['add_account'])) {
 
 <script type="text/javascript">
 
-// function to build our form rows every time we click on the "Add row" button
-$(function(){
-	var counter = 1;
-	$('p#add_field').click(function(){
-		counter += 1;
-		$('#container').append(
-		'<tr> \
-		<td>' + counter + '</td> \
-		<td><div class="form-group"><input class="form-control" name="fields['+counter+'][first]"	type="text"  	placeholder="First" required/></div></td> \
-		<td><div class="form-group"><input class="form-control" name="fields['+counter+'][last]" 	type="text"  	placeholder="Last" required/></div></td> \
-		<td><div class="form-group"><input class="form-control" name="fields['+counter+'][email]" 	type="email"  	placeholder="email" required/></div></td> \
-		<td><input class="btn btn-primary" id="userfiles" name="fields['+counter+'][file_uploaded][]" 	type="file"  	required = "required"/></td> \
-		<td><input class="btn btn-danger" type="button" value="Remove" onclick="delRow(this)"></td> \
-		</tr>');
+$(function() {
 
+	let rowCounter = 0;
+
+	$('#add-row-btn').click(function() {
+		rowCounter++;
+
+		const newRow = `
+			<tr id="row-${rowCounter}">
+				<td>${rowCounter}</td>
+				<td>
+					<div class="form-group">
+						<input class="form-control" name="fields[${rowCounter}][first]" type="text" placeholder="First" required>
+					</div>
+				</td>
+				<td>
+					<div class="form-group">
+						<input class="form-control" name="fields[${rowCounter}][last]" type="text" placeholder="Last" required>
+					</div>
+				</td>
+				<td>
+					<div class="form-group">
+						<input class="form-control" name="fields[${rowCounter}][email]" type="email" placeholder="Email" required>
+					</div>
+				</td>
+				<td>
+					<input class="btn btn-primary" name="fields[${rowCounter}][file_uploaded][]" type="file" required>
+				</td>
+				<td>
+					<button class="btn btn-danger" type="button" onclick="removeRow(${rowCounter})">Remove</button>
+				</td>
+			</tr>
+		`;
+
+		$('#container').append(newRow);
 	});
-});
 
-// function to remove selected row
-function delRow(currElement) {
-	 var parentRowIndex = currElement.parentNode.parentNode.rowIndex;
-	 document.getElementById("myTable").deleteRow(parentRowIndex);
-}
+	function removeRow(rowId) {
+		$(`#row-${rowId}`).remove();
+		renumberRows();
+	}
+
+	function renumberRows() {
+		$('#container tr').each(function(index) {
+			const rowNumber = index + 1;
+			$(this).find('td:first').text(rowNumber);
+			$(this).attr('id', `row-${rowNumber}`);
+		});
+	}
+
+});
 </script>
+
