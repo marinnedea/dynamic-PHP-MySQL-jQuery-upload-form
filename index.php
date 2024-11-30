@@ -1,8 +1,7 @@
 <?php
-// Start session
 session_start();
-if (!isset($_SESSION['user'])) {
-    header("Location: admin.php");
+if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
+    header("Location: login.php");
     exit;
 }
 
@@ -44,10 +43,10 @@ $files = $pdo->query("SELECT * FROM uploads")->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Form</title>
+    <title>Admin Area</title>
 </head>
 <body>
-    <h1>Upload Form</h1>
+    <h1>Admin Area</h1>
     <form method="post" enctype="multipart/form-data">
         <label for="file">Choose file:</label>
         <input type="file" name="file" id="file" required>
