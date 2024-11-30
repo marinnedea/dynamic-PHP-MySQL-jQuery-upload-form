@@ -40,8 +40,8 @@ This project is a dynamic file upload form built using PHP, MySQL, and jQuery. I
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/marinnedea/dynamic-PHP-MySQL-jQuery-upload-form-.git
-   cd dynamic-PHP-MySQL-jQuery-upload-form-
+   git clone https://github.com/marinnedea/dynamic-PHP-MySQL-jQuery-upload-form.git
+   cd dynamic-PHP-MySQL-jQuery-upload-form
    ```
 
 2. **Set Up the Database**:
@@ -87,7 +87,7 @@ This project is a dynamic file upload form built using PHP, MySQL, and jQuery. I
 ## File Structure
 
 ```
-dynamic-PHP-MySQL-jQuery-upload-form-/
+dynamic-PHP-MySQL-jQuery-upload-form/
 │
 ├── index.php            # Main file upload area (admin only)
 ├── login.php            # Admin login page
