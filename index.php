@@ -71,7 +71,31 @@ $uploads = $pdo->query("SELECT first_name, last_name, email, filename, uploaded_
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Form</title>
     <style>
-        body { font-family: sans-serif; margin: 30px; }
+        * { box-sizing: border-box; }
+        body { font-family: sans-serif; margin: 0; background: #f5f5f5; }
+        nav {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 52px;
+        }
+        nav .nav-title { font-weight: 700; font-size: 1rem; letter-spacing: 0.02em; }
+        nav .nav-user  { font-size: 0.85rem; color: #aab4c4; }
+        nav a.nav-logout {
+            margin-left: 16px;
+            color: #cdd3de;
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 5px 12px;
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 5px;
+            transition: background 0.15s;
+        }
+        nav a.nav-logout:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .page { margin: 30px; }
         #rows-container { margin: 16px 0; }
         .upload-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
         .row-num { width: 24px; text-align: right; font-weight: bold; color: #555; flex-shrink: 0; }
@@ -91,8 +115,15 @@ $uploads = $pdo->query("SELECT first_name, last_name, email, filename, uploaded_
     </style>
 </head>
 <body>
+    <nav>
+        <span class="nav-title">Upload Form</span>
+        <span>
+            <span class="nav-user">Logged in as <?= htmlspecialchars($_SESSION['user']) ?></span>
+            <a href="logout.php" class="nav-logout">Logout</a>
+        </span>
+    </nav>
+    <div class="page">
     <h1>Upload Form</h1>
-    <a href="logout.php">Logout</a>
 
     <?php if ($success > 0): ?>
         <div class="messages">
@@ -144,6 +175,7 @@ $uploads = $pdo->query("SELECT first_name, last_name, email, filename, uploaded_
         <p>No uploads yet.</p>
     <?php endif; ?>
 
+    </div><!-- /.page -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         function updateRowNumbers() {
