@@ -112,6 +112,37 @@ $uploads = $pdo->query("SELECT first_name, last_name, email, filename, uploaded_
         table { border-collapse: collapse; margin-top: 16px; width: 100%; }
         th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; font-size: 0.9rem; }
         th { background: #f0f0f0; }
+        a.file-link { color: #2e86ab; text-decoration: none; }
+        a.file-link:hover { text-decoration: underline; }
+
+        /* Lightbox */
+        #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        #lightbox.active { display: flex; }
+        #lightbox img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 6px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+        }
+        #lightbox-close {
+            position: fixed;
+            top: 16px;
+            right: 24px;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            user-select: none;
+        }
+        #lightbox-close:hover { color: #ccc; }
     </style>
 </head>
 <body>
@@ -165,7 +196,18 @@ $uploads = $pdo->query("SELECT first_name, last_name, email, filename, uploaded_
                         <td><?= htmlspecialchars($row['first_name']) ?></td>
                         <td><?= htmlspecialchars($row['last_name']) ?></td>
                         <td><?= htmlspecialchars($row['email']) ?></td>
-                        <td><?= htmlspecialchars($row['filename']) ?></td>
+                        <?php
+            $fname = htmlspecialchars($row['filename']);
+            $ext   = strtolower(pathinfo($row['filename'], PATHINFO_EXTENSION));
+            $is_img = in_array($ext, ['jpg','jpeg','png','gif']);
+        ?>
+        <td>
+            <?php if ($is_img): ?>
+                <a href="uploads/<?= $fname ?>" class="file-link img-preview"><?= $fname ?></a>
+            <?php else: ?>
+                <a href="uploads/<?= $fname ?>" class="file-link" target="_blank" rel="noopener"><?= $fname ?></a>
+            <?php endif; ?>
+        </td>
                         <td><?= $row['uploaded_at'] ?></td>
                     </tr>
                 <?php endforeach; ?>
@@ -176,6 +218,12 @@ $uploads = $pdo->query("SELECT first_name, last_name, email, filename, uploaded_
     <?php endif; ?>
 
     </div><!-- /.page -->
+
+    <div id="lightbox">
+        <span id="lightbox-close">&times;</span>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         function updateRowNumbers() {
@@ -208,6 +256,22 @@ $uploads = $pdo->query("SELECT first_name, last_name, email, filename, uploaded_
 
         // Start with one row
         addRow();
+
+        // Lightbox
+        $(document).on('click', 'a.img-preview', function (e) {
+            e.preventDefault();
+            $('#lightbox-img').attr('src', $(this).attr('href'));
+            $('#lightbox').addClass('active');
+        });
+
+        $('#lightbox-close, #lightbox').on('click', function () {
+            $('#lightbox').removeClass('active');
+            $('#lightbox-img').attr('src', '');
+        });
+
+        $('#lightbox img').on('click', function (e) {
+            e.stopPropagation();
+        });
     </script>
 </body>
 </html>
