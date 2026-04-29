@@ -1,136 +1,90 @@
+# Dynamic PHP-MySQL Upload Form
 
-# Dynamic PHP-MySQL-jQuery Upload Form
-
-This project is a dynamic file upload form built using PHP, MySQL, and jQuery. It allows users to upload files and view them dynamically. Additionally, it includes an admin login system for secure access to the upload area. The project uses modern practices, such as PDO for database interactions, session-based authentication, and role-based access control.
+A file upload form built with PHP and MySQL. Includes admin login, role-based access control, and file management. Uses PDO for all database interactions.
 
 ## Features
 
-1. **Secure Admin Area**:
-   - Only authorized users can access the upload functionality.
-   - Admin users must log in with valid credentials.
-
-2. **File Upload System**:
-   - Supports uploading files to a dedicated `uploads/` directory.
-   - Stores file information in a MySQL database.
-
-3. **File Management**:
-   - Dynamically displays a list of uploaded files.
-
-4. **User Management**:
-   - Includes a login system for admins.
-   - Role-based access ensures non-admins cannot access restricted pages.
-
-5. **Secure Code**:
-   - Uses prepared statements to prevent SQL injection.
-   - Passwords are hashed with `password_hash` for secure storage.
-
-6. **Optional Admin Registration**:
-   - A separate registration page allows adding new admin users.
-
-
+1. **Secure Admin Area** — only authenticated users with the `admin` role can access the upload functionality
+2. **File Upload** — validates MIME type (JPEG, PNG, GIF, PDF) and enforces a 5 MB size limit before saving to `uploads/`
+3. **File Listing** — displays uploaded files after login
+4. **Admin Management** — optional registration page for creating additional admin accounts (requires an existing admin session)
+5. **Secure Code** — prepared statements throughout, passwords hashed with `password_hash`
 
 ## Installation
 
 ### Prerequisites
-- A web server with PHP 7.4 or higher (e.g., Apache or Nginx).
-- MySQL database.
-- Basic knowledge of setting up PHP projects.
+- PHP 7.4 or higher (Apache or Nginx)
+- MySQL 5.7+ / MariaDB
 
-### Steps to Set Up the Project
+### Steps
 
-1. **Clone the Repository**:
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/marinnedea/dynamic-PHP-MySQL-jQuery-upload-form.git
    cd dynamic-PHP-MySQL-jQuery-upload-form
    ```
 
-2. **Set Up the Database**:
-   - Import the provided `accounts.sql` file into your MySQL database:
-     ```bash
-     mysql -u your_username -p your_database_name < accounts.sql
-     ```
-   - Update the database credentials in the following files:
-     - `index.php`
-     - `login.php`
-     - `register.php` (if used)
+2. **Set up the database**:
+   ```bash
+   mysql -u your_username -p your_database < accounts.sql
+   ```
 
-3. **Set Directory Permissions**:
-   - Ensure the `uploads/` directory is writable by the web server:
-     ```bash
-     mkdir uploads
-     chmod 755 uploads
-     ```
+3. **Configure database credentials** — edit `config.php`:
+   ```php
+   $dsn     = 'mysql:host=your_host;dbname=your_database;charset=utf8mb4';
+   $db_user = 'your_username';
+   $db_pass = 'your_password';
+   ```
 
-4. **Access the Project**:
-   - Open your browser and navigate to the project:
-     - `login.php`: Admin login page.
-     - `register.php` (Optional): Register a new admin user.
-     - `index.php`: Admin area for uploading and viewing files (accessible only after login).
+4. **Set directory permissions**:
+   ```bash
+   mkdir uploads
+   chmod 755 uploads
+   ```
 
+5. **Bootstrap the first admin user**:
+   - Temporarily comment out the session guard in `register.php` (see the comment in that file)
+   - Visit `register.php`, create your admin account
+   - Uncomment the guard again
 
-
-## Usage
-
-### Admin Login
-1. Navigate to the `login.php` page.
-2. Log in using the default admin credentials (if provided) or create a new admin user via `register.php`.
-
-### File Upload
-1. After logging in, upload files using the form on `index.php`.
-2. Uploaded files are saved in the `uploads/` directory and listed dynamically.
-
-### Logout
-- Click the **Logout** link to end your session.
-
-
+6. **Access the project**:
+   - `login.php` — admin login
+   - `index.php` — upload area (admin only)
+   - `register.php` — create additional admin accounts (admin only)
 
 ## File Structure
 
 ```
 dynamic-PHP-MySQL-jQuery-upload-form/
-│
-├── index.php            # Main file upload area (admin only)
+├── config.php           # Database connection (edit credentials here)
+├── index.php            # File upload area (admin only)
 ├── login.php            # Admin login page
-├── register.php         # Optional admin registration page
-├── logout.php           # Ends the admin session
-├── uploads/             # Directory where uploaded files are stored
-├── accounts.sql         # SQL file to set up the users table
-├── README.md            # Project documentation
+├── register.php         # Create additional admin accounts (admin only)
+├── logout.php           # Ends the session
+├── accounts.sql         # Creates the users and uploads tables
+├── uploads/             # Uploaded files are stored here
+├── CHANGELOG.md         # Version history
+└── README.md
 ```
-
 
 ## Security
 
-- **Authentication**: Only authenticated users can access the upload form.
-- **Password Hashing**: Passwords are hashed before storing them in the database.
-- **SQL Injection Prevention**: All database interactions use prepared statements.
-- **Role-Based Access Control**: Only users with the `admin` role can access the admin area.
-
+- **Authentication** — session-based, all protected pages redirect to `login.php` if not logged in
+- **Role-based access** — only users with `role = admin` can reach `index.php` and `register.php`
+- **File validation** — MIME type and size checked server-side before the file is accepted
+- **SQL injection prevention** — all queries use PDO prepared statements
+- **Password hashing** — `password_hash` / `password_verify` with `PASSWORD_DEFAULT`
 
 ## Future Enhancements
 
-1. Add a progress bar for file uploads using jQuery.
-2. Implement file type and size validation on both client and server sides.
-3. Add a feature for admin users to delete uploaded files.
-4. Enhance the UI with modern CSS frameworks (e.g., Bootstrap or TailwindCSS).
-
-
-## Contributing
-
-Feel free to submit issues or contribute to the project. Pull requests are welcome!
-
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature-branch`).
-3. Commit your changes (`git commit -m "Description of changes"`).
-4. Push to your branch (`git push origin feature-branch`).
-5. Open a pull request.
-
+1. Add a progress bar for file uploads
+2. Allow admin users to delete uploaded files
+3. Improve the UI with a CSS framework (e.g., Bootstrap or Tailwind)
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
+MIT — see [LICENSE](LICENSE).
 
 ## Contact
 
-For any inquiries or support, feel free to contact [Marin Nedea](https://github.com/marinnedea).
+[Marin Nedea](https://github.com/marinnedea)
