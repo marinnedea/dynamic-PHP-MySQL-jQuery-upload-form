@@ -1,27 +1,27 @@
 <?php
-$dsn = 'mysql:host=your_host;dbname=your_database';
-$username = 'your_username';
-$password = 'your_password';
+session_start();
 
-try {
-    $pdo = new PDO($dsn, $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+// Only an existing admin can create new admin accounts.
+// To bootstrap the very first admin: temporarily comment out these 3 lines,
+// register once, then uncomment them again.
+if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
+    header("Location: login.php");
+    exit;
 }
+
+require 'config.php';
+
+$message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $hashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-    $stmt = $pdo->prepare("INSERT INTO users (username, password, role) VALUES (:username, :password, 'admin')");
-    $stmt->execute([
-        ':username' => $_POST['username'],
-        ':password' => $hashedPassword
-    ]);
-    echo "Admin user created successfully.";
+    $pdo->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, 'admin')")
+        ->execute([
+            $_POST['username'],
+            password_hash($_POST['password'], PASSWORD_DEFAULT),
+        ]);
+    $message = "Admin user created successfully.";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,6 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <h1>Register Admin</h1>
+    <?php if ($message): ?>
+        <p><?= htmlspecialchars($message) ?></p>
+    <?php endif; ?>
     <form method="post">
         <label for="username">Username:</label>
         <input type="text" name="username" id="username" required>
@@ -40,5 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <br>
         <button type="submit">Register</button>
     </form>
+    <a href="index.php">Back</a>
 </body>
 </html>

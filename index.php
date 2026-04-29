@@ -5,39 +5,40 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-$dsn = 'mysql:host=your_host;dbname=your_database';
-$username = 'your_username';
-$password = 'your_password';
+require 'config.php';
 
-try {
-    $pdo = new PDO($dsn, $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
+$message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
-    $fileName = $_FILES['file']['name'];
-    $fileTmp = $_FILES['file']['tmp_name'];
-    $uploadDir = 'uploads/';
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
+    $max_size = 5 * 1024 * 1024; // 5 MB
 
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
-    }
+    $file = $_FILES['file'];
 
-    $uploadPath = $uploadDir . basename($fileName);
-    if (move_uploaded_file($fileTmp, $uploadPath)) {
-        $stmt = $pdo->prepare("INSERT INTO uploads (filename) VALUES (:filename)");
-        $stmt->execute([':filename' => $fileName]);
-        echo "File uploaded successfully.";
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        $message = "Upload error (code {$file['error']}).";
+    } elseif (!in_array(mime_content_type($file['tmp_name']), $allowed_types)) {
+        $message = "File type not allowed. Accepted: JPEG, PNG, GIF, PDF.";
+    } elseif ($file['size'] > $max_size) {
+        $message = "File too large. Maximum size is 5 MB.";
     } else {
-        echo "Failed to upload file.";
+        $uploadDir = 'uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $safeName = basename($file['name']);
+        if (move_uploaded_file($file['tmp_name'], $uploadDir . $safeName)) {
+            $pdo->prepare("INSERT INTO uploads (filename) VALUES (?)")->execute([$safeName]);
+            $message = "File uploaded successfully.";
+        } else {
+            $message = "Failed to move uploaded file.";
+        }
     }
 }
 
-$files = $pdo->query("SELECT * FROM uploads")->fetchAll(PDO::FETCH_ASSOC);
+$files = $pdo->query("SELECT filename FROM uploads ORDER BY id DESC")->fetchAll();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,6 +48,11 @@ $files = $pdo->query("SELECT * FROM uploads")->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <h1>Admin Area</h1>
+
+    <?php if ($message): ?>
+        <p><?= htmlspecialchars($message) ?></p>
+    <?php endif; ?>
+
     <form method="post" enctype="multipart/form-data">
         <label for="file">Choose file:</label>
         <input type="file" name="file" id="file" required>
@@ -55,8 +61,8 @@ $files = $pdo->query("SELECT * FROM uploads")->fetchAll(PDO::FETCH_ASSOC);
 
     <h2>Uploaded Files</h2>
     <ul>
-        <?php foreach ($files as $file): ?>
-            <li><?= htmlspecialchars($file['filename']) ?></li>
+        <?php foreach ($files as $row): ?>
+            <li><?= htmlspecialchars($row['filename']) ?></li>
         <?php endforeach; ?>
     </ul>
 
